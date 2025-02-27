@@ -17,6 +17,7 @@ function Profile() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [todoArray, setTodoArray] = useState([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   useEffect(() => {
@@ -29,10 +30,21 @@ function Profile() {
     if (StoreEmail) {
       setEmail(StoreEmail);
     }
-
+    fetchTodos();
   }, []);
 
 
+  const fetchTodos = async () => {
+    try {
+      const response = await getTodo();
+      let data = response.data.todo;
+      if (data.length != 0) {
+        setTodoArray(response.data.todo || []);
+      }
+    } catch (err) {
+      ResponseHandler.error("fetch err");
+    }
+  };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -44,15 +56,19 @@ function Profile() {
       handleSuccess("Profile updated successfully");
       localStorage.setItem("Username", response.data.user.username);
       localStorage.setItem("Email", response.data.user.email);
-      navigate("/todo");
+      navigate("/profile");
     } catch (err) {
       ResponseHandler.error(err);
     }
   };
+  // useEffect(() => {
+  //   if (!ValidationError.isProfileValidate(username, email, setError)) {
+  //     return;
+  //   }
+  // }, [username, email])
 
   const handleDeleteAccount = async () => {
-    const todoCounter = parseInt(localStorage.getItem("todocounter") || "0", 10); 
-    if (todoCounter > 0) {
+    if (todoArray.length != 0) {
       handleError("Can’t delete yourself as todos exist in your bucket");
     }
     else {

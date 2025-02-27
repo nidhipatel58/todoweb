@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import profileImg from "../../assets/profile.png";
 import ButtonComponent from "../Button/Button.component";
-// import CloseAccount from "../Accountclose/accountclosed";
 
 const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -11,10 +10,14 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
   const dropdownRef = useRef(null);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("token");
+    localStorage.removeItem("id");
+    localStorage.removeItem("Username");
+    localStorage.removeItem("Email");
     setIsLoggedIn(false);
     setShowDropdown(false);
-    navigate("/login");
+    navigate("/");
   };
 
   const handleProfileClick = () => {
@@ -61,6 +64,14 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
                 }}
               >
                 Create Todo
+              </button>
+              <button
+                className="create-todo-btn"
+                onClick={() => {
+                  navigate("/addtodo");
+                }}
+              >
+                Add
               </button>
               <div className="profile-dropdown" ref={dropdownRef}>
                 <button className="profile-btn" onClick={toggleDropdown}>

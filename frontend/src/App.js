@@ -6,9 +6,8 @@ import Signup from "./Components/Signup/signup";
 import Profile from "./Components/Profile/profile";
 import Todo from "./Components/Todo/Todo.component";
 import UpdateTodo from "./Components/Todo/Updatetodo";
+import Addtodo from "./Components/Todo/Addtodo";
 import { ToastContainer } from "react-toastify";
-
-const SESSION_TIMEOUT = 10 * 1000; 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,44 +22,6 @@ function App() {
     if (loggedIn && restrictedRoutes.includes(location.pathname)) {
       navigate("/todo");
     }
-
-    let logoutTimer;
-    const resetSession = () => {
-      clearTimeout(logoutTimer);
-      logoutTimer = setTimeout(logout, SESSION_TIMEOUT);
-      localStorage.setItem("lastActivity", Date.now());
-    };
-
-    const logout = () => {
-      alert("Session expired! Logging out...");
-      localStorage.clear();
-      setIsLoggedIn(false);
-      navigate("/login");
-    };
-
-    const checkSession = () => {
-      const lastActivity = localStorage.getItem("lastActivity");
-      if (lastActivity && Date.now() - lastActivity > SESSION_TIMEOUT) {
-        logout();
-      }
-    };
-
-    const activityHandler = () => resetSession();
-
-    if (loggedIn) {
-      resetSession();
-      window.addEventListener("mousemove", activityHandler);
-      window.addEventListener("keydown", activityHandler);
-      const sessionCheckInterval = setInterval(checkSession, 1000);
-
-      return () => {
-        window.removeEventListener("mousemove", activityHandler);
-        window.removeEventListener("keydown", activityHandler);
-        clearTimeout(logoutTimer);
-        clearInterval(sessionCheckInterval);
-      };
-    }
-
   }, [navigate, location.pathname]);
 
   return (
@@ -76,6 +37,7 @@ function App() {
             element={<Login setIsLoggedIn={setIsLoggedIn} />}
           />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/addtodo" element={<Addtodo />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/updatetodo" element={<UpdateTodo />} />
           <Route path="/todo" element={<Todo />} />
